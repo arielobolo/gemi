@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor JSON</title>
+    <meta name="csrf-token" content="<%= csrfToken %>"> <!-- Meta tag para el token CSRF -->
+    <style>
+        /* Estilos para el textarea */
+        #jsonData {
+            background-color: #000; /* Fondo negro */
+            color: #ff4d4d; /* Texto rojo oscuro */
+            font-family: monospace; /* Fuente monoespaciada para JSON */
+            padding: 10px;
+            border: 1px solid #555; /* Borde gris oscuro */
+            border-radius: 5px;
+            width: 100%;
+            height: 480px;
+            box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+        }
+
+ 
+        /* Estilos para los botones */
+        .actionButton {
+            margin-top: 10px; /* Espacio encima del botón */
+            padding: 10px 15px; /* Espaciado interno del botón */
+            background-color: #007bff; /* Color de fondo del botón */
+            color: white; /* Color del texto del botón */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Bordes redondeados */
+            cursor: pointer; /* Cambia el cursor al pasar el mouse */
+        }
+
+        .actionButton:hover {
+            background-color: #0056b3; /* Color más oscuro al pasar el mouse */
+        }
+        .successMessage {
+    color: green; /* Color verde para mensajes de éxito */
+}
+
+.errorMessage {
+    color: red; /* Color rojo para mensajes de error */
+}
+
+    </style>
+</head>
+<body>
+    <h1>Editor Modelo JSON</h1>
+    <div id="saveMessage"></div> <!-- Div para el mensaje de guardado -->
+    <textarea id="jsonData" rows="20" cols="80"><%= JSON.stringify(jsonData, null, 2) %></textarea>
+    <br>
+    <button id="saveButton" class="actionButton">Guardar Cambios</button> <!-- Botón para guardar -->
+    <button id="chatButton" class="actionButton" onclick="window.location.href='/'">Ir al Chat</button> <!-- Botón para ir al chat -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>$(document).ready(function () {
+    $('#saveButton').on('click', function () {
+        const csrfToken = $('meta[name="csrf-token"]').attr('content');
+        const jsonData = $('#jsonData').val();
+        
+        try {
+            // Intenta parsear el JSON antes de enviarlo
+            const parsedData = JSON.parse(jsonData);
+
+            $.ajax({
+                url: '/editorjson',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ jsonData: parsedData }),
+                headers: {
+                    'CSRF-Token': csrfToken // Añadir el token CSRF a la cabecera
+                },
+                success: function (response) {
+                    // Verificar si la respuesta contiene un mensaje
+                    if (response.message) {
+                        $('#saveMessage').text(response.message)
+                                        .removeClass('errorMessage') // Asegúrate de quitar la clase de error
+                                        .addClass('successMessage'); // Añade la clase de éxito
+                    } else {
+                        $('#saveMessage').text('Éxito: Se guardó el Json.')
+                                        .removeClass('errorMessage')
+                                        .addClass('successMessage'); // Mensaje genérico de éxito
+                    }
+                    setTimeout(() => {
+                        $('#saveMessage').text(''); // Limpiar mensaje después de unos segundos
+                    }, 3000);
+                },
+                error: function (xhr, status, error) {
+                    const errorMessage = xhr.responseJSON ? xhr.responseJSON.error : 'Error al guardar el archivo JSON'; // Mensaje de error personalizado
+                    $('#saveMessage').text(errorMessage)
+                                    .removeClass('successMessage') // Asegúrate de quitar la clase de éxito
+                                    .addClass('errorMessage'); // Añade la clase de error
+                }
+            });
+        } catch (e) {
+            // Si hay un error al parsear el JSON, muestra el error en el div
+            $('#saveMessage').text('Algo está mal escrito, te faltó o sobra una coma o borraste un corchete o las comillas :)  ...revisa culiado ...no se guardó !!')
+                            .removeClass('successMessage') // Asegúrate de quitar la clase de éxito
+                            .addClass('errorMessage'); // Añade la clase de error
+            console.error('Error al parsear JSON:', e); // Opcional: log en consola para depuración
+        }
+    });
+});
+
+    </script>
+</body>
+</html>

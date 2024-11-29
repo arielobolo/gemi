@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Texto a voz con selección de voz</title>
+</head>
+<body>
+  <h1>Texto a voz con SpeechSynthesis</h1>
+  <textarea id="textInput" placeholder="Escribe el texto que quieres escuchar"></textarea><br>
+
+  <!-- Select para mostrar las voces disponibles -->
+  <label for="voiceSelect">Elige una voz:</label>
+  <select id="voiceSelect"></select><br><br>
+
+  <button id="speakButton">Escuchar</button>
+
+  <script>
+    if ('speechSynthesis' in window) {
+      const synth = window.speechSynthesis;
+      const voiceSelect = document.getElementById("voiceSelect");
+      
+      // Cargar las voces cuando estén disponibles
+      function populateVoiceList() {
+        const voices = synth.getVoices();
+        voiceSelect.innerHTML = ''; // Limpiar el select antes de añadir opciones
+
+        voices.forEach((voice) => {
+          const option = document.createElement("option");
+          option.textContent = `${voice.name} (${voice.lang})`;
+          option.value = voice.name;
+          voiceSelect.appendChild(option);
+        });
+      }
+
+      // Ejecutar populateVoiceList al cargar las voces
+      populateVoiceList();
+      synth.onvoiceschanged = populateVoiceList;
+
+      document.getElementById("speakButton").addEventListener("click", () => {
+        const text = document.getElementById("textInput").value.trim();
+        const selectedVoiceName = voiceSelect.value;
+        
+        if (!text) {
+          alert("Por favor, escribe un texto.");
+          return;
+        }
+
+        const utterThis = new SpeechSynthesisUtterance(text);
+        utterThis.pitch = 0.8;   // Ajusta el tono a tu preferencia
+        utterThis.rate = 1.2;      // Velocidad normal
+
+        // Asignar la voz seleccionada
+        utterThis.voice = synth.getVoices().find(voice => voice.name === selectedVoiceName);
+
+        // Reproducir el texto
+        synth.speak(utterThis);
+      });
+    } else {
+      alert("Tu navegador no soporta la API de síntesis de voz.");
+    }
+  </script>
+</body>
+</html>

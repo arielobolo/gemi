@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUSHI Chat</title>
+    <meta name="csrf-token" content="<%= csrfToken %>"> <!-- Meta tag para el token CSRF -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <!-- Incluyendo responsiveVoice.js desde CDN -->
+  <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
+    
+    <!-- Estilos para el chat -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        #headerContainer {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        #resultContainer {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+        #result {
+            display: flex;
+            flex-direction: column;
+        }
+        #result p {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            max-width: 75%;
+            line-height: 1.4;
+        }
+        .user-message {
+            background-color: #dcf8c6;
+            align-self: flex-end;
+        }
+        .bot-message {
+            background-color: #f1f1f1;
+            align-self: flex-start;
+        }
+        /* Caja de entrada de texto */
+        .input-container {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+        }
+        .input-container textarea {
+            width: 100%;
+            height: 40px;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            resize: none;
+            font-size: 1rem;
+            outline: none;
+            background-color: #f1f1f1;
+        }
+        .input-container button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .input-container button:hover {
+            background-color: #0056b3;
+        }
+
+      /* Estilos para los botones */
+        .actionButton {
+            margin-top: 10px; /* Espacio encima del botón */
+            padding: 10px 15px; /* Espaciado interno del botón */
+            background-color: yellow; /* Color de fondo del botón */
+            color: black; /* Color del texto del botón */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Bordes redondeados */
+            cursor: pointer; /* Cambia el cursor al pasar el mouse */
+        }
+
+        .actionButton:hover {
+            background-color: #0056b3; /* Color más oscuro al pasar el mouse */
+        }
+
+       
+
+    </style>
+</head>
+
+
+<div class="chat-container">
+    <div id="headerContainer">
+        <img src="/putita.png" alt="Logo de <%= nombreBot %>" width="100" height="80">
+        <h2><%= nombreBot %> IA ENTRENADOR V2</h2>
+<button id="newReglaButton" class="actionButton" >new regla</button>
+<button id="chatButton" class="actionButton"  onclick="window.location.href='/editorjson'">Editor Json</button>
+<button id="clearChatButton" class="actionButton" >Borrar historial</button>
+<button id="confButton" class="actionButton" onclick="window.location.href='/config'">conf</button>
+
+    </div>
+
+    <div id="resultContainer">
+        <div id="result">
+            <% historial.forEach(entry => { %>
+                <p class="<%= entry.role === 'user' ? 'user-message' : 'bot-message' %>">
+                    <strong><%= entry.role === 'user' ? 'Usuario' : nombreBot %>:</strong> 
+                    <%- entry.text.replace(/\n/g, '<br>') %> <!-- Asegura que se respeten los saltos de línea -->
+                </p>
+            <% }) %>
+        </div>
+    </div>
+
+    <div class="input-container">
+
+        <textarea id="prompt" name="prompt" rows="1" placeholder="Escribe tu mensaje..."></textarea>
+        <button type="submit" id="sendButton">Enviar</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+
+        scrollToBottom();
+
+        // Función para insertar "regla " en el campo de entrada
+        $('#newReglaButton').on('click', function() {
+            $('#prompt').val('regla '); // Escribe "regla " en el campo de entrada
+            $('#prompt').focus(); // Enfoca el campo de entrada para continuar escribiendo
+        });
+
+        $('#sendButton').on('click', function(e) {
+            e.preventDefault(); // Prevenir el comportamiento por defecto del botón
+
+            const prompt = $('#prompt').val();
+            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            if (!prompt.trim()) {
+                return; // No enviar si el campo de entrada está vacío
+            }
+
+            // Agregar el texto del usuario al contenedor de resultados con estilo
+            $('#result').append(`<p class="user-message"><strong>Tú:</strong> ${prompt}</p>`);
+            scrollToBottom(); // Asegurarse de que el chat se desplaza hacia el final
+
+            $.ajax({
+                url: '/gemini', // La ruta donde se manejará la solicitud
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ prompt: prompt }), // Enviando el prompt como JSON
+                headers: {
+                    'CSRF-Token': csrfToken // Añadir el token CSRF a la cabecera
+                },
+                success: function(data) {
+                    console.log("Respuesta recibida:", data); // Mensaje de depuración
+
+                    // Llamar a la función de escritura progresiva para mostrar la respuesta del bot
+                    writeBotMessageLetterByLetter(data.response.text); // Convertir el texto HTML a letras
+
+                    // Leer la respuesta en voz alta
+               //    responsiveVoice.speak(data.response.text, "Spanish Female");
+
+// Función para eliminar emojis del texto
+function eliminarEmojis(texto) {
+    return texto.replace(/[\u{1F600}-\u{1F64F}|\u{1F300}-\u{1F5FF}|\u{1F680}-\u{1F6FF}|\u{1F700}-\u{1F77F}|\u{1F800}-\u{1F8FF}|\u{1F900}-\u{1F9FF}|\u{1FA00}-\u{1FA6F}|\u{1FB00}-\u{1FBFF}|\u{2600}-\u{26FF}|\u{2700}-\u{27BF}|\u{2702}|\u{2753}-\u{2755}|\u{2B50}|\u{1F004}|\u{1F0CF}]/gu, '') // Eliminar emojis
+               .replace(/[!*¿?.,;:(){}<>[\]“”‘’]/g, ''); // Eliminar signos de puntuación
+}
+
+
+// Ejemplo de uso con responsiveVoice
+const textoOriginal = data.response.text; // Texto original que podría contener emojis
+const textoSinEmojis = eliminarEmojis(textoOriginal); // Filtrar los emojis
+
+// Agregar función de lectura en voz alta con velocidad de 1.2
+responsiveVoice.speak(textoSinEmojis, "Spanish Female", { rate: 1.2 });
+                    $('#prompt').val(''); // Limpiar el textarea
+                    scrollToBottom(); // Asegurarse de que el chat se desplaza hacia el final
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("Error en la solicitud:", textStatus, errorThrown); // Manejo de errores
+                    $('#result').append(`<p>Error: ${textStatus}</p>`); // Mostrar el error en el div
+                }
+            });
+        });
+
+        // Permitir enviar el formulario con la tecla Enter
+        $('#prompt').on('keypress', function(e) {
+            if (e.which === 13 && !e.shiftKey) { // Si se presiona Enter sin Shift
+                e.preventDefault(); // Prevenir el comportamiento por defecto
+                $('#sendButton').click(); // Disparar el envío del formulario
+            }
+        });
+
+        // Función para desplazar el contenedor de resultados hacia abajo
+        function scrollToBottom() {
+            $('#resultContainer').scrollTop($('#resultContainer')[0].scrollHeight);
+        }
+
+        function writeBotMessageLetterByLetter(message) {
+            const botMessageElement = $(`<p class="bot-message"><strong><%= nombreBot %>:</strong> </p>`);
+            $('#result').append(botMessageElement);
+
+            let i = 0;
+            const intervalId = setInterval(() => {
+                if (i < message.length) {
+                    botMessageElement.append(message.charAt(i));
+                    i++;
+                } else {
+                    clearInterval(intervalId); // Detener el intervalo una vez que se ha escrito todo el mensaje
+                }
+            }, 10); // Ajusta la velocidad aquí (50 ms por letra)
+        }
+    });
+
+    // Función de borrado de conversación
+    $('#clearChatButton').on('click', function() {
+        const csrfToken = $('meta[name="csrf-token"]').attr('content');
+        $.ajax({
+            url: '/clear-conversation',
+            type: 'POST',
+            headers: {
+                'CSRF-Token': csrfToken
+            },
+            success: function() {
+                $('#result').empty(); // Vaciar el contenido del chat en pantalla
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("Error al borrar la conversación:", textStatus, errorThrown);
+            }
+        });
+    });
+</script>
+
+
+</body>
+
+
+</body>
+</html>

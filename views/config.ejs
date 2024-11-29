@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración .env</title>
+    <meta name="csrf-token" content="<%= csrfToken %>"> <!-- Meta tag para el token CSRF -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-light">
+
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Configuración del Archivo .env</h1>
+        
+        <form id="configForm" class="border p-4 bg-white shadow-sm rounded">
+            <div class="mb-3">
+                <label class="form-label">PORT:</label>
+                <input type="text" name="PORT" class="form-control" value="<%= envConfig.PORT %>">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">MONGO_URI:</label>
+                <input type="text" name="MONGO_URI" class="form-control" value="<%= envConfig.MONGO_URI %>">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">PUBLICVAPIS:</label>
+                <input type="text" name="PUBLICVAPIS" class="form-control" value="<%= envConfig.PUBLICVAPIS %>">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">PRIVATEVAPID:</label>
+                <input type="text" name="PRIVATEVAPID" class="form-control" value="<%= envConfig.PRIVATEVAPID %>">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">API_KEY:</label>
+                <input type="text" name="API_KEY" class="form-control" value="<%= envConfig.API_KEY %>">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">NOMBRE:</label>
+                <input type="text" name="NOMBRE" class="form-control" value="<%= envConfig.NOMBRE %>">
+            </div>
+            
+            <!-- Botones en la misma línea -->
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary btn-sm">Guardar Cambios</button>
+                <button id="chatButton" class="btn btn-secondary btn-sm" onclick="window.location.href='/'">Ir al Chat</button>
+            </div>
+        </form>
+
+        <div id="responseMessage" class="alert mt-4 d-none" role="alert"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#configForm').submit(function(event) {
+                event.preventDefault();
+                
+                const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                $.ajax({
+                    url: '/config',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    headers: {
+                        'CSRF-Token': csrfToken
+                    },
+                    success: function(response) {
+                        $('#responseMessage')
+                            .removeClass('d-none alert-danger')
+                            .addClass('alert-success')
+                            .text(response);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#responseMessage')
+                            .removeClass('d-none alert-success')
+                            .addClass('alert-danger')
+                            .text('Error al guardar los cambios.');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+
+
+
+
+
+
+</html>
