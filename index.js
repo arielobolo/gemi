@@ -6,13 +6,13 @@ const path = require('path');
 const fs = require('fs');
 const dotenv = require('dotenv');
 const rutas = require('./rutas');
-const connectDB = require('./config/db');
+//const connectDB = require('./config/db');
 const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
 // Configuración de dotenv
 dotenv.config();
 // Conectar a MongoDB
-connectDB();
+//connectDB();
 // Configuración del servidor
 const app = express();
 const PORT = process.env.PORT || 3000;
