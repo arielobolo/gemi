@@ -22,7 +22,10 @@ function extraerTextoDePDF(rutaPDF) {
 }
 
 // Cargar el contenido del PDF al iniciar
-extraerTextoDePDF('/crebro.pdf');
+//extraerTextoDePDF('/crebro.pdf');
+// Cargar el contenido del PDF al iniciar
+const rutaPDF = path.join(__dirname, 'crebro.pdf'); // Usar __dirname para obtener la ruta correcta
+extraerTextoDePDF(rutaPDF);
 
 // Función para ajustar la respuesta basándose en el JSON o el PDF
 function ajustarRespuesta(prompt) {
