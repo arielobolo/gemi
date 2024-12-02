@@ -1,22 +1,42 @@
 [
   {
-    "respuesta": "El SEP 777000 ofrece beneficios como atención médica y descuentos en farmacias.",
-    "clave": ["beneficios del sep", "qué beneficios tiene el sep", "qué ofrece el sep", "cuáles son los beneficios del sep"]
+    "respuesta": "Los consultorios médicos están abiertos de lunes a viernes, de 8:00 a 16:00. Para turnos, llama al 0351-4202600 interno 2760.",
+    "clave": ["consultorios médicos", "horario de atención médica", "turnos médicos", "consultas médicas"]
   },
   {
-    "respuesta": "Para retirar un obsequio navideño, debes dirigirte al SEP con tu identificación oficial.",
-    "clave": ["retirar obsequio navideño", "cómo retirar obsequio navideño", "dónde retiro obsequio navideño"]
+    "respuesta": "Puedes acceder a beneficios sociales como subsidios de transporte, asistencia económica, y orientación legal en la Secretaría de Asistencia Social.",
+    "clave": ["beneficios sociales", "asistencia social", "subsidios", "orientación legal"]
   },
   {
-    "respuesta": "El horario de atención del SEP es de lunes a viernes, de 8:00 a 17:00.",
-    "clave": ["horario del sep", "a qué hora atienden", "a qué hora abren", "qué horario tienes", "horario de atención"]
+    "respuesta": "El SEP ofrece cursos de capacitación en áreas como informática, idiomas, y desarrollo profesional. Inscripciones abiertas todo el año.",
+    "clave": ["cursos", "capacitaciones", "talleres", "educación"]
   },
   {
-  "respuesta" : "Primer Piso: Atención a jubilados Tel: 4202689, Secretaría de Asistencia Social Tel: 0351-4202604/0351-4202600 interno 2742/0351-420262",
-  "clave": ["primer piso" , "jubilados"]  
-},
-{
-"respuesta" : "mi nombre es pushito",
-  "clave": ["nombre" , "apodo"]  
-}
+    "respuesta": "En la farmacia del SEP puedes obtener descuentos en medicamentos presentando tu credencial de afiliado. Horario: lunes a viernes de 8:00 a 17:00.",
+    "clave": ["farmacia", "descuentos en medicamentos", "horario farmacia", "medicamentos disponibles"]
+  },
+  {
+    "respuesta": "Este mes, el SEP organiza un torneo de fútbol y una feria de salud. Consulta el calendario en nuestra web oficial.",
+    "clave": ["eventos", "actividades", "torneos", "feria de salud"]
+  },
+  {
+    "respuesta": "Para trámites administrativos como renovación de credenciales o certificados, dirígete al 2do piso, oficina 5. Horario: 8:00 a 16:00.",
+    "clave": ["trámites administrativos", "renovación de credencial", "certificados", "trámites en el sep"]
+  },
+  {
+    "respuesta": "Afíliate al SEP presentando tu DNI, una foto tamaño carnet, y el formulario de inscripción en nuestras oficinas.",
+    "clave": ["afiliación", "cómo afiliarse", "requisitos para afiliarse", "inscribirme en el sep"]
+  },
+  {
+    "respuesta": "El SEP tiene oficinas en Calle Principal 123. Consulta más ubicaciones llamando al 0351-4202600.",
+    "clave": ["dirección", "ubicación", "dónde está el sep", "sucursales"]
+  },
+  {
+    "respuesta": "El SEP fue fundado en 1947 con el objetivo de brindar apoyo integral a sus afiliados, ofreciendo beneficios sociales y culturales.",
+    "clave": ["historia del sep", "qué es el sep", "misión del sep", "visión del sep"]
+  },
+  {
+    "respuesta": "No encontré información sobre eso. ¿Quizás quisiste preguntar algo como: '¿Cómo me afilio al SEP?' o '¿Qué beneficios ofrece el SEP?'",
+    "clave": []
+  }
 ]
