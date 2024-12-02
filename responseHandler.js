@@ -22,8 +22,6 @@ function extraerTextoDePDF(rutaPDF) {
 }
 
 // Cargar el contenido del PDF al iniciar
-//extraerTextoDePDF('/crebro.pdf');
-// Cargar el contenido del PDF al iniciar
 const rutaPDF = path.join(__dirname, 'crebro.pdf'); // Usar __dirname para obtener la ruta correcta
 extraerTextoDePDF(rutaPDF);
 
@@ -43,7 +41,7 @@ function ajustarRespuesta(prompt) {
     respuesta.clave.forEach((clave) => {
       const similitud = stringSimilarity.compareTwoStrings(preguntaMinuscula, clave);
 
-      if (similitud > 0.3) {  // Umbral ajustable
+      if (similitud > 0.3) { // Umbral ajustable
         respuestasRelevantes.add(respuesta.respuesta); // Agregar respuesta al Set
       }
     });
@@ -60,8 +58,8 @@ function ajustarRespuesta(prompt) {
     return coincidenciaPDF;
   }
 
-  // Respuesta genérica si no hay coincidencia suficiente en el JSON ni en el PDF
-  return "Lo siento, no tengo información sobre eso. ¿Puedes preguntar algo más específico?";
+  // Si no hay coincidencias, la IA Gemini responde libremente
+  return null; // Retorna null para delegar la respuesta a la IA Gemini
 }
 
 // Función para buscar una coincidencia en el contenido del PDF
