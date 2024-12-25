@@ -59,7 +59,9 @@ router.post('/gemini', csrfProtection, async (req, res) => {
   try {
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-8b-exp-0924",
+      model: 
+"gemini-2.0-flash-exp",
+//"gemini-1.5-flash-8b-exp-0924",
       systemInstruction: "Te llamas Pushi y eres un asistente del SEP."
     });
 
