@@ -34,6 +34,11 @@ function ajustarRespuesta(prompt) {
     return "Hola! ¿En qué puedo ayudarte?";
   }
 
+  // dolar
+  if (preguntaMinuscula.startsWith("precio dolar") || preguntaMinuscula.startsWith("dolar") || preguntaMinuscula.includes("cambio")) {
+    return "Hola! el precio del dolar es $1400";
+  }
+
   // Buscar todas las respuestas relevantes en el JSON usando similitud de texto
   const respuestasRelevantes = new Set(); // Usamos un Set para evitar duplicados
 
